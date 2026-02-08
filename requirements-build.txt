@@ -1,0 +1,2 @@
+# Solo para empaquetar (build). No necesario para ejecutar la app.
+PyInstaller>=6.3.0
