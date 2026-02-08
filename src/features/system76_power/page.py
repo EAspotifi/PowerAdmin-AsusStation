@@ -76,10 +76,22 @@ class System76PowerPage(QWidget):
         line.setFrameShadow(QFrame.Shadow.Sunken)
         layout.addWidget(line)
 
-        # Modo de gráficos
+        # Modo de gráficos (título + botón ayuda)
+        graphics_title_row = QHBoxLayout()
+        graphics_title_row.setSpacing(8)
         graphics_label = QLabel("Modo de gráficos")
         graphics_label.setFont(QFont("", 11, QFont.Weight.Bold))
-        layout.addWidget(graphics_label)
+        graphics_title_row.addWidget(graphics_label)
+        self._graphics_help_btn = QPushButton("?")
+        self._graphics_help_btn.setFixedSize(24, 24)
+        self._graphics_help_btn.setStyleSheet(
+            "border-radius: 12px; font-weight: bold; font-size: 14px;"
+        )
+        self._graphics_help_btn.setToolTip("Explicación de los modos de gráficos")
+        self._graphics_help_btn.clicked.connect(self._show_graphics_modes_help)
+        graphics_title_row.addWidget(self._graphics_help_btn)
+        graphics_title_row.addStretch(1)
+        layout.addLayout(graphics_title_row)
         graphics_note = QLabel("Se requiere reinicio después de cambiar el modo.")
         graphics_note.setWordWrap(True)
         graphics_note.setStyleSheet("color: gray;")
@@ -154,3 +166,26 @@ class System76PowerPage(QWidget):
             self._load()
         else:
             QMessageBox.critical(self, "Error", f"No se pudo cambiar el modo:\n{err}")
+
+    def _show_graphics_modes_help(self) -> None:
+        """Muestra ventana emergente con la explicación de cada modo de gráficos."""
+        text = """<h3>Modos de gráficos</h3>
+<p><b>Integrated</b><br/>
+Solo la GPU integrada. Menor consumo y mayor duración de batería. La GPU discreta (NVIDIA) no se usa.</p>
+
+<p><b>Hybrid (PRIME)</b><br/>
+Usa ambas GPUs. La integrada para la pantalla por defecto; la NVIDIA cuando una aplicación la solicita. Buen equilibrio entre rendimiento y batería.</p>
+
+<p><b>NVIDIA</b><br/>
+La GPU discreta NVIDIA como principal. Mejor rendimiento gráfico y para juegos; mayor consumo.</p>
+
+<p><b>Compute</b><br/>
+Similar a Integrated en pantalla (todo se dibuja con la integrada), pero la NVIDIA queda disponible para cálculo (CUDA, ML, etc.) sin usarla para mostrar la interfaz.</p>
+
+<p><i>Tras cambiar el modo es necesario reiniciar el equipo.</i></p>"""
+        msg = QMessageBox(self)
+        msg.setWindowTitle("Ayuda: modos de gráficos")
+        msg.setTextFormat(Qt.TextFormat.RichText)
+        msg.setText(text)
+        msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msg.exec()
