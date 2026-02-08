@@ -18,7 +18,7 @@ from PyQt6.QtGui import QFont
 from .sidebar import Sidebar, SIDEBAR_ID_SUPERGFXCTL, SIDEBAR_ID_ASUSCTL
 from .theme import ThemeKind, apply_theme, get_highlight_color
 from src.features.supergfxctl.page import SupergfxctlPage
-from src.features.asusctl.page import AsusctlPage
+from src.features.asusctl.container import AsusctlContainer
 
 
 def _theme_slider_stylesheet() -> str:
@@ -114,9 +114,9 @@ class MainWindow(QMainWindow):
         self._supergfxctl_page = SupergfxctlPage(
             pending_highlight_color=get_highlight_color(self._theme),
         )
-        self._asusctl_page = AsusctlPage(self)
+        self._asusctl_container = AsusctlContainer(self)
         self._stack.addWidget(self._supergfxctl_page)
-        self._stack.addWidget(self._asusctl_page)
+        self._stack.addWidget(self._asusctl_container)
         content_layout.addWidget(self._stack, 1)
 
         main_layout.addWidget(content, 1)
@@ -129,7 +129,7 @@ class MainWindow(QMainWindow):
         if section_id == SIDEBAR_ID_SUPERGFXCTL:
             self._stack.setCurrentWidget(self._supergfxctl_page)
         elif section_id == SIDEBAR_ID_ASUSCTL:
-            self._stack.setCurrentWidget(self._asusctl_page)
+            self._stack.setCurrentWidget(self._asusctl_container)
 
     def _on_theme_slider_changed(self, value: int) -> None:
         app = QApplication.instance()

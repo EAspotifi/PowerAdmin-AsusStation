@@ -5,7 +5,7 @@ Aplicación de escritorio en Python con PyQt6 para administrar **supergfxctl** y
 ## Funcionalidad
 
 - **Supergfxctl**: modos de gráficos (botones por modo, modo actual, cambio pendiente).
-- **Asusctl**: sección preparada para controles asusctl (por implementar).
+- **Asusctl**: al elegir Asusctl se despliega un submenú con **Información**, **Perfiles de rendimiento** y **Batería**; cada opción carga su pantalla.
 - Barra lateral para cambiar entre Supergfxctl y Asusctl.
 - Tema claro y oscuro (sin librerías externas, solo PyQt6).
 
@@ -43,14 +43,24 @@ src/
 │   ├── supergfxctl/            # Slice: modos de gráficos
 │   │   ├── page.py             # UI de la página
 │   │   └── cli.py              # Infraestructura: llamadas a supergfxctl
-│   └── asusctl/                # Slice: asusctl (placeholder)
-│       └── page.py             # UI placeholder
+│   └── asusctl/                # Slice: asusctl (submenú + páginas)
+│       ├── cli.py              # Infraestructura: asusctl info, battery, profile
+│       ├── container.py        # Contenedor: submenú + stack de páginas
+│       ├── use_cases/          # Casos de uso (orquestan lógica)
+│       │   ├── info.py
+│       │   ├── battery.py
+│       │   └── profiles.py
+│       └── pages/              # Una página por subsección
+│           ├── info_page.py
+│           ├── battery_page.py
+│           └── profiles_page.py
 └── __init__.py
 ```
 
 - **app/**: composición de la app, navegación y tema.
-- **features/*/page.py**: pantalla de cada feature.
-- **features/*/cli.py** (o similar): adaptadores a herramientas externas (CLI).
+- **features/*/use_cases/**: casos de uso que delegan en cli y devuelven datos a la UI.
+- **features/*/pages/**: pantallas por subsección (Asusctl tiene 3).
+- **features/*/cli.py**: adaptadores a herramientas externas (CLI).
 
 Así se facilita añadir nuevas features, cambiar una sin tocar otras y preparar el empaquetado para Linux.
 
@@ -72,5 +82,14 @@ AsusControl/
         │   ├── page.py
         │   └── cli.py
         └── asusctl/
-            └── page.py
+            ├── cli.py
+            ├── container.py
+            ├── use_cases/
+            │   ├── info.py
+            │   ├── battery.py
+            │   └── profiles.py
+            └── pages/
+                ├── info_page.py
+                ├── battery_page.py
+                └── profiles_page.py
 ```
