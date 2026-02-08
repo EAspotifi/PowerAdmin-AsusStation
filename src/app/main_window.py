@@ -84,6 +84,11 @@ class MainWindow(QMainWindow):
 
         # Contenedor: barra superior (tema) + stacked widget
         content = QWidget()
+        content.setMinimumWidth(400)
+        content.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Expanding,
+        )
         content_layout = QVBoxLayout(content)
         content_layout.setContentsMargins(16, 16, 16, 16)
         content_layout.setSpacing(12)
