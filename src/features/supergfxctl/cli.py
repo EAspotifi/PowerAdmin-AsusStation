@@ -1,17 +1,11 @@
-"""Módulo para interactuar con supergfxctl."""
+"""Infraestructura: ejecuta el binario supergfxctl (adaptador CLI)."""
 
 import re
 import subprocess
 
 
 def get_supported_modes() -> list[str]:
-    """Obtiene los modos de gráficos soportados por supergfxctl.
-
-    Ejecuta `supergfxctl -s` y parsea la salida [Modo1, Modo2, ...].
-
-    Returns:
-        Lista de nombres de modos disponibles.
-    """
+    """Obtiene los modos soportados (supergfxctl -s)."""
     try:
         result = subprocess.run(
             ["supergfxctl", "-s"],
@@ -21,26 +15,18 @@ def get_supported_modes() -> list[str]:
         )
         if result.returncode != 0:
             return []
-
         output = result.stdout.strip()
-        # Parsear formato: [Integrated, Hybrid, NvidiaNoModeset]
         match = re.match(r"\[(.*)\]", output)
         if not match:
             return []
-
         modes_str = match.group(1)
-        modes = [m.strip() for m in modes_str.split(",") if m.strip()]
-        return modes
+        return [m.strip() for m in modes_str.split(",") if m.strip()]
     except (subprocess.TimeoutExpired, FileNotFoundError):
         return []
 
 
 def get_current_mode() -> str:
-    """Obtiene el modo de gráficos actual.
-
-    Returns:
-        Nombre del modo actual, o cadena vacía si falla.
-    """
+    """Obtiene el modo actual (supergfxctl -g)."""
     try:
         result = subprocess.run(
             ["supergfxctl", "-g"],
@@ -50,18 +36,13 @@ def get_current_mode() -> str:
         )
         if result.returncode != 0:
             return ""
-
         return result.stdout.strip()
     except (subprocess.TimeoutExpired, FileNotFoundError):
         return ""
 
 
 def get_pending_mode() -> str:
-    """Obtiene el modo pendiente (cambio solicitado aún no aplicado).
-
-    Returns:
-        Nombre del modo pendiente, o cadena vacía si no hay cambio pendiente.
-    """
+    """Obtiene el modo pendiente (supergfxctl -P)."""
     try:
         result = subprocess.run(
             ["supergfxctl", "-P"],
@@ -71,18 +52,13 @@ def get_pending_mode() -> str:
         )
         if result.returncode != 0:
             return ""
-
         return result.stdout.strip()
     except (subprocess.TimeoutExpired, FileNotFoundError):
         return ""
 
 
 def get_pending_action() -> str:
-    """Obtiene la acción pendiente del usuario (ej: logout, reboot).
-
-    Returns:
-        Descripción de la acción pendiente, o cadena vacía si no hay.
-    """
+    """Obtiene la acción pendiente (supergfxctl -p)."""
     try:
         result = subprocess.run(
             ["supergfxctl", "-p"],
@@ -92,21 +68,13 @@ def get_pending_action() -> str:
         )
         if result.returncode != 0:
             return ""
-
         return result.stdout.strip()
     except (subprocess.TimeoutExpired, FileNotFoundError):
         return ""
 
 
 def set_mode(mode: str) -> tuple[bool, str]:
-    """Cambia el modo de gráficos.
-
-    Args:
-        mode: Nombre del modo (ej: Integrated, Hybrid, Vfio).
-
-    Returns:
-        Tupla (éxito, mensaje de error o vacío).
-    """
+    """Establece el modo de gráficos (supergfxctl -m)."""
     try:
         result = subprocess.run(
             ["supergfxctl", "-m", mode],
@@ -116,7 +84,9 @@ def set_mode(mode: str) -> tuple[bool, str]:
         )
         if result.returncode == 0:
             return True, ""
-        return False, result.stderr.strip() or result.stdout.strip() or "Error desconocido"
+        return False, (
+            result.stderr.strip() or result.stdout.strip() or "Error desconocido"
+        )
     except subprocess.TimeoutExpired:
         return False, "Tiempo de espera agotado"
     except FileNotFoundError:

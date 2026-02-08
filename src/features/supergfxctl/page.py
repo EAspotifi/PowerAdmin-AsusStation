@@ -1,10 +1,8 @@
-"""Ventana principal de la aplicación AsusControl."""
+"""UI del slice Supergfxctl: página de modos de gráficos."""
 
 from PyQt6.QtWidgets import (
-    QMainWindow,
     QWidget,
     QVBoxLayout,
-    QHBoxLayout,
     QLabel,
     QPushButton,
     QScrollArea,
@@ -12,10 +10,10 @@ from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
 )
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
-from .supergfxctl import (
+from .cli import (
     get_supported_modes,
     get_current_mode,
     get_pending_mode,
@@ -24,47 +22,37 @@ from .supergfxctl import (
 )
 
 
-class MainWindow(QMainWindow):
-    """Ventana principal para administrar modos de gráficos con supergfxctl."""
+class SupergfxctlPage(QWidget):
+    """Página que muestra modo actual, pendiente y botones para cambiar modo (supergfxctl)."""
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, pending_highlight_color: str = "#c75000", parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self._pending_highlight_color = pending_highlight_color
         self._setup_ui()
-        self._load_modes()
 
     def _setup_ui(self) -> None:
-        self.setWindowTitle("AsusControl - Modos de gráficos")
-        self.setMinimumSize(400, 300)
-        self.resize(500, 450)
-
-        central = QWidget()
-        self.setCentralWidget(central)
-        layout = QVBoxLayout(central)
+        layout = QVBoxLayout(self)
         layout.setSpacing(12)
 
-        # Título
         title = QLabel("Modos de gráficos (supergfxctl)")
+        title.setObjectName("pageTitle")
         title.setFont(QFont("", 14, QFont.Weight.Bold))
         layout.addWidget(title)
 
-        # Modo actual
         self._current_label = QLabel("Modo actual: --")
         self._current_label.setFont(QFont("", 11))
         layout.addWidget(self._current_label)
 
-        # Cambio pendiente
         self._pending_label = QLabel("Cambio pendiente: --")
         self._pending_label.setFont(QFont("", 10))
-        self._pending_label.setStyleSheet("color: #c75000;")
+        self._pending_label.setStyleSheet(f"color: {self._pending_highlight_color};")
         layout.addWidget(self._pending_label)
 
-        # Separador
         line = QFrame()
         line.setFrameShape(QFrame.Shape.HLine)
         line.setFrameShadow(QFrame.Shadow.Sunken)
         layout.addWidget(line)
 
-        # Botones de modos (contenedor con scroll si hay muchos)
         modes_label = QLabel("Selecciona un modo:")
         modes_label.setFont(QFont("", 10))
         layout.addWidget(modes_label)
@@ -73,24 +61,28 @@ class MainWindow(QMainWindow):
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-
         self._modes_container = QWidget()
         self._modes_layout = QGridLayout(self._modes_container)
         self._modes_layout.setSpacing(8)
         scroll.setWidget(self._modes_container)
-
         layout.addWidget(scroll, 1)
 
-        # Botón actualizar
         self._refresh_btn = QPushButton("Actualizar modos")
-        self._refresh_btn.clicked.connect(self._load_modes)
+        self._refresh_btn.clicked.connect(self.refresh)
         layout.addWidget(self._refresh_btn)
 
-    def _load_modes(self) -> None:
-        """Carga los modos soportados y actualiza el modo actual."""
-        self._refresh_btn.setEnabled(False)
+    def set_pending_highlight_color(self, color: str) -> None:
+        """Actualiza el color de la etiqueta de cambio pendiente (p. ej. al cambiar tema)."""
+        self._pending_highlight_color = color
+        self._pending_label.setStyleSheet(f"color: {color};")
 
-        # Limpiar botones anteriores
+    def showEvent(self, event) -> None:
+        super().showEvent(event)
+        self.refresh()
+
+    def refresh(self) -> None:
+        """Carga modos, modo actual y pendiente desde supergfxctl."""
+        self._refresh_btn.setEnabled(False)
         while self._modes_layout.count():
             item = self._modes_layout.takeAt(0)
             if item.widget():
@@ -102,16 +94,13 @@ class MainWindow(QMainWindow):
         pending_action = get_pending_action()
 
         self._current_label.setText(f"Modo actual: {current or '--'}")
-
         if pending_mode:
             msg = f"Cambio pendiente: {pending_mode}"
             if pending_action:
                 msg += f" ({pending_action})"
             self._pending_label.setText(msg)
-            self._pending_label.setVisible(True)
         else:
             self._pending_label.setText("Cambio pendiente: ninguno")
-            self._pending_label.setVisible(True)
 
         if not modes:
             label = QLabel("No se encontraron modos o supergfxctl no está disponible.")
@@ -124,7 +113,7 @@ class MainWindow(QMainWindow):
                 btn.setMinimumHeight(44)
                 btn.setMinimumWidth(140)
                 if mode == current:
-                    btn.setStyleSheet("font-weight: bold;")
+                    btn.setStyleSheet(btn.styleSheet() + " font-weight: bold;")
                 btn.clicked.connect(lambda checked, m=mode: self._on_mode_clicked(m))
                 row, col = divmod(i, cols)
                 self._modes_layout.addWidget(btn, row, col)
@@ -132,20 +121,14 @@ class MainWindow(QMainWindow):
         self._refresh_btn.setEnabled(True)
 
     def _on_mode_clicked(self, mode: str) -> None:
-        """Maneja el clic en un botón de modo."""
         ok, err = set_mode(mode)
         if ok:
             QMessageBox.information(
                 self,
                 "Modo cambiado",
                 f"Se está cambiando a modo '{mode}'.\n\n"
-                "Algunos cambios requieren cerrar sesión o reiniciar.\n"
-                "Verifica el estado con supergfxctl -g.",
+                "Algunos cambios requieren cerrar sesión o reiniciar.",
             )
-            self._load_modes()
+            self.refresh()
         else:
-            QMessageBox.critical(
-                self,
-                "Error",
-                f"No se pudo cambiar el modo:\n{err}",
-            )
+            QMessageBox.critical(self, "Error", f"No se pudo cambiar el modo:\n{err}")
