@@ -10,10 +10,11 @@ from PyQt6.QtGui import QFont
 # Identificadores de cada sección (screaming: lo que hace cada ítem)
 SIDEBAR_ID_SUPERGFXCTL = "supergfxctl"
 SIDEBAR_ID_ASUSCTL = "asusctl"
+SIDEBAR_ID_SYSTEM76_POWER = "system76_power"
 
 
 class Sidebar(QWidget):
-    """Lista lateral que permite elegir la sección: Supergfxctl o Asusctl."""
+    """Lista lateral: Supergfxctl, Asusctl, System76-power."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -33,6 +34,8 @@ class Sidebar(QWidget):
         self._list.item(0).setData(Qt.ItemDataRole.UserRole, SIDEBAR_ID_SUPERGFXCTL)
         self._list.addItem(QListWidgetItem("Asusctl"))
         self._list.item(1).setData(Qt.ItemDataRole.UserRole, SIDEBAR_ID_ASUSCTL)
+        self._list.addItem(QListWidgetItem("System76-power"))
+        self._list.item(2).setData(Qt.ItemDataRole.UserRole, SIDEBAR_ID_SYSTEM76_POWER)
         self._list.setCurrentRow(0)
 
     def current_id(self) -> str:
