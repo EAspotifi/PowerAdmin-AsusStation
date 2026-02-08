@@ -6,6 +6,8 @@ from PyQt6.QtWidgets import QListWidget, QListWidgetItem, QVBoxLayout, QWidget, 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
+from .i18n import tr
+
 
 # Identificadores de cada sección (screaming: lo que hace cada ítem)
 SIDEBAR_ID_SUPERGFXCTL = "supergfxctl"
@@ -25,18 +27,25 @@ class Sidebar(QWidget):
     def _setup_ui(self) -> None:
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        title = QLabel("AsusControl")
-        title.setFont(QFont("", 12, QFont.Weight.Bold))
-        layout.addWidget(title)
+        self._title_label = QLabel(tr("sidebar.title"))
+        self._title_label.setFont(QFont("", 12, QFont.Weight.Bold))
+        layout.addWidget(self._title_label)
         layout.addWidget(self._list, 1)
 
-        self._list.addItem(QListWidgetItem("Supergfxctl"))
+        self._list.addItem(QListWidgetItem(tr("sidebar.supergfxctl")))
         self._list.item(0).setData(Qt.ItemDataRole.UserRole, SIDEBAR_ID_SUPERGFXCTL)
-        self._list.addItem(QListWidgetItem("Asusctl"))
+        self._list.addItem(QListWidgetItem(tr("sidebar.asusctl")))
         self._list.item(1).setData(Qt.ItemDataRole.UserRole, SIDEBAR_ID_ASUSCTL)
-        self._list.addItem(QListWidgetItem("System76-power"))
+        self._list.addItem(QListWidgetItem(tr("sidebar.system76_power")))
         self._list.item(2).setData(Qt.ItemDataRole.UserRole, SIDEBAR_ID_SYSTEM76_POWER)
         self._list.setCurrentRow(0)
+
+    def refresh_ui(self) -> None:
+        """Actualiza textos al cambiar el idioma."""
+        self._title_label.setText(tr("sidebar.title"))
+        self._list.item(0).setText(tr("sidebar.supergfxctl"))
+        self._list.item(1).setText(tr("sidebar.asusctl"))
+        self._list.item(2).setText(tr("sidebar.system76_power"))
 
     def current_id(self) -> str:
         """Devuelve el id de la sección seleccionada."""

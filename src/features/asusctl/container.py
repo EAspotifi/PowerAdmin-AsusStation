@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
+from src.app.i18n import tr
 from .pages.info_page import InfoPage
 from .pages.battery_page import BatteryPage
 from .pages.profiles_page import ProfilesPage
@@ -39,11 +40,11 @@ class AsusctlContainer(QWidget):
         self._sub_list.setObjectName("asusctlSubmenu")
         self._sub_list.setFixedWidth(180)
         self._sub_list.setFont(QFont("", 10))
-        self._sub_list.addItem(QListWidgetItem("Información"))
+        self._sub_list.addItem(QListWidgetItem(tr("asusctl.submenu_info")))
         self._sub_list.item(0).setData(Qt.ItemDataRole.UserRole, SUB_ID_INFO)
-        self._sub_list.addItem(QListWidgetItem("Perfiles de rendimiento"))
+        self._sub_list.addItem(QListWidgetItem(tr("asusctl.submenu_profiles")))
         self._sub_list.item(1).setData(Qt.ItemDataRole.UserRole, SUB_ID_PROFILES)
-        self._sub_list.addItem(QListWidgetItem("Batería"))
+        self._sub_list.addItem(QListWidgetItem(tr("asusctl.submenu_battery")))
         self._sub_list.item(2).setData(Qt.ItemDataRole.UserRole, SUB_ID_BATTERY)
         self._sub_list.setCurrentRow(0)
         layout.addWidget(self._sub_list)
@@ -71,3 +72,13 @@ class AsusctlContainer(QWidget):
     def _on_sub_changed(self, row: int) -> None:
         if 0 <= row < self._stack.count():
             self._stack.setCurrentIndex(row)
+
+    def refresh_ui(self) -> None:
+        """Actualiza textos al cambiar el idioma."""
+        self._sub_list.item(0).setText(tr("asusctl.submenu_info"))
+        self._sub_list.item(1).setText(tr("asusctl.submenu_profiles"))
+        self._sub_list.item(2).setText(tr("asusctl.submenu_battery"))
+        for i in range(self._stack.count()):
+            w = self._stack.widget(i)
+            if hasattr(w, "refresh_ui"):
+                w.refresh_ui()

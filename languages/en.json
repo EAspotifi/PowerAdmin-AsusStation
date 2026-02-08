@@ -1,0 +1,98 @@
+{
+  "app": {
+    "title": "AsusControl",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "sidebar": {
+    "title": "AsusControl",
+    "supergfxctl": "Supergfxctl",
+    "asusctl": "Asusctl",
+    "system76_power": "System76-power"
+  },
+  "asusctl": {
+    "submenu_info": "Information",
+    "submenu_profiles": "Performance profiles",
+    "submenu_battery": "Battery"
+  },
+  "supergfxctl": {
+    "title": "Graphics modes (supergfxctl)",
+    "current_mode": "Current mode: --",
+    "pending": "Pending change: --",
+    "pending_none": "Pending change: none",
+    "select_mode": "Select a mode:",
+    "refresh": "Refresh modes",
+    "no_modes": "No modes found or supergfxctl is not available."
+  },
+  "asusctl_info": {
+    "title": "Information",
+    "refresh": "Refresh information",
+    "loading": "Loading…",
+    "no_data": "No data."
+  },
+  "asusctl_battery": {
+    "title": "Battery",
+    "limit_label": "Charge limit (%):",
+    "set_limit": "Set limit",
+    "loading": "Loading…",
+    "no_data": "No data."
+  },
+  "asusctl_profiles": {
+    "title": "Performance profiles",
+    "active": "Active: --",
+    "ac": "On AC: --",
+    "battery": "On battery: --",
+    "now_group": "Profile in use now",
+    "now_desc": "Choose the profile you want to use right now.",
+    "battery_group": "Profile on battery (automatic)",
+    "battery_desc": "Profile to use when the laptop is on battery only.",
+    "refresh": "Refresh profiles",
+    "no_profiles": "No profiles found."
+  },
+  "system76_power": {
+    "title": "System76-power",
+    "desc": "Power profiles for Pop!_OS / System76 laptops.",
+    "current_profile": "Current profile: --",
+    "select_profile": "Select profile",
+    "graphics_title": "Graphics mode",
+    "graphics_help_tooltip": "Explanation of graphics modes",
+    "graphics_note": "A reboot is required after changing the mode.",
+    "graphics_current": "Current mode: --",
+    "select_graphics": "Select mode",
+    "refresh": "Refresh"
+  },
+  "dialogs": {
+    "error": "Error",
+    "supergfxctl_mode_changed": "Mode changed",
+    "supergfxctl_mode_message": "Switching to mode '{mode}'.\n\nSome changes require logout or reboot.",
+    "supergfxctl_error": "Could not change mode:\n{err}",
+    "profile_set": "Current profile",
+    "profile_set_message": "Profile set to «{profile}».",
+    "profile_error": "Could not change profile:\n{err}",
+    "battery_profile": "Battery profile",
+    "battery_profile_message": "When on battery, profile «{profile}» will be used.",
+    "battery_profile_error": "Could not set battery profile:\n{err}",
+    "battery_limit": "Battery limit",
+    "battery_limit_message": "Charge limit set to {percent}%.",
+    "battery_limit_error": "Could not set limit:\n{err}",
+    "graphics_help_title": "Help: graphics modes",
+    "graphics_mode_set": "Graphics mode",
+    "graphics_mode_message": "Mode set to «{mode}».\n\nA reboot is required to apply the change.",
+    "graphics_mode_error": "Could not change mode:\n{err}",
+    "system76_profile_set": "Power profile",
+    "system76_profile_message": "Profile set to «{profile}».",
+    "system76_profile_error": "Could not change profile:\n{err}"
+  },
+  "help_graphics_modes": {
+    "title": "Graphics modes",
+    "integrated": "Integrated GPU only. Lower power draw and longer battery life. The discrete (NVIDIA) GPU is not used.",
+    "hybrid": "Uses both GPUs. Integrated for display by default; NVIDIA when an application requests it. Good balance of performance and battery.",
+    "nvidia": "NVIDIA discrete GPU as primary. Best graphics and gaming performance; higher power draw.",
+    "compute": "Like Integrated for display (everything rendered on integrated), but NVIDIA remains available for compute (CUDA, ML, etc.) without driving the display.",
+    "reboot_note": "A reboot is required after changing the mode."
+  },
+  "language_names": {
+    "es": "Español",
+    "en": "English"
+  }
+}

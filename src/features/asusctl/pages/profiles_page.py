@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
+from src.app.i18n import tr
 from ..use_cases.profiles import (
     get_profile_list,
     get_profile_state,
@@ -31,45 +32,45 @@ class ProfilesPage(QWidget):
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
 
-        title = QLabel("Perfiles de rendimiento")
-        title.setObjectName("pageTitle")
-        title.setFont(QFont("", 14, QFont.Weight.Bold))
-        layout.addWidget(title)
+        self._title_label = QLabel(tr("asusctl_profiles.title"))
+        self._title_label.setObjectName("pageTitle")
+        self._title_label.setFont(QFont("", 14, QFont.Weight.Bold))
+        layout.addWidget(self._title_label)
 
-        self._profile_active_label = QLabel("Activo: —")
-        self._profile_ac_label = QLabel("En AC: —")
-        self._profile_battery_label = QLabel("Con batería: —")
+        self._profile_active_label = QLabel(tr("asusctl_profiles.active"))
+        self._profile_ac_label = QLabel(tr("asusctl_profiles.ac"))
+        self._profile_battery_label = QLabel(tr("asusctl_profiles.battery"))
         for lbl in (self._profile_active_label, self._profile_ac_label, self._profile_battery_label):
             lbl.setFont(QFont("", 10))
             layout.addWidget(lbl)
 
-        now_group = QGroupBox("Perfil en uso ahora")
-        now_group.setFont(QFont("", 9))
-        now_layout = QVBoxLayout(now_group)
-        now_desc = QLabel("Elige el perfil que quieres usar en este momento.")
+        self._now_group = QGroupBox(tr("asusctl_profiles.now_group"))
+        self._now_group.setFont(QFont("", 9))
+        now_layout = QVBoxLayout(self._now_group)
+        now_desc = QLabel(tr("asusctl_profiles.now_desc"))
         now_desc.setWordWrap(True)
         now_desc.setStyleSheet("color: gray; font-weight: normal;")
         now_layout.addWidget(now_desc)
         self._current_buttons_layout = QHBoxLayout()
         self._current_buttons_layout.setSpacing(8)
         now_layout.addLayout(self._current_buttons_layout)
-        layout.addWidget(now_group)
+        layout.addWidget(self._now_group)
 
-        bat_group = QGroupBox("Perfil con batería (automático)")
-        bat_group.setFont(QFont("", 9))
-        bat_layout = QVBoxLayout(bat_group)
-        bat_desc = QLabel("Perfil que se usará cuando el portátil esté solo con batería.")
+        self._bat_group = QGroupBox(tr("asusctl_profiles.battery_group"))
+        self._bat_group.setFont(QFont("", 9))
+        bat_layout = QVBoxLayout(self._bat_group)
+        bat_desc = QLabel(tr("asusctl_profiles.battery_desc"))
         bat_desc.setWordWrap(True)
         bat_desc.setStyleSheet("color: gray; font-weight: normal;")
         bat_layout.addWidget(bat_desc)
         self._battery_buttons_layout = QHBoxLayout()
         self._battery_buttons_layout.setSpacing(8)
         bat_layout.addLayout(self._battery_buttons_layout)
-        layout.addWidget(bat_group)
+        layout.addWidget(self._bat_group)
 
-        btn = QPushButton("Actualizar perfiles")
-        btn.clicked.connect(self._load)
-        layout.addWidget(btn)
+        self._refresh_btn = QPushButton(tr("asusctl_profiles.refresh"))
+        self._refresh_btn.clicked.connect(self._load)
+        layout.addWidget(self._refresh_btn)
         layout.addStretch(1)
 
     def showEvent(self, event) -> None:
@@ -80,9 +81,9 @@ class ProfilesPage(QWidget):
         profiles = get_profile_list()
         _, active, ac, battery = get_profile_state()
 
-        self._profile_active_label.setText(f"Activo: {active or '—'}")
-        self._profile_ac_label.setText(f"En AC: {ac or '—'}")
-        self._profile_battery_label.setText(f"Con batería: {battery or '—'}")
+        self._profile_active_label.setText(tr("asusctl_profiles.active").replace("--", active or "—"))
+        self._profile_ac_label.setText(tr("asusctl_profiles.ac").replace("--", ac or "—"))
+        self._profile_battery_label.setText(tr("asusctl_profiles.battery").replace("--", battery or "—"))
 
         while self._current_buttons_layout.count():
             item = self._current_buttons_layout.takeAt(0)
@@ -94,8 +95,8 @@ class ProfilesPage(QWidget):
                 item.widget().deleteLater()
 
         if not profiles:
-            self._current_buttons_layout.addWidget(QLabel("No se encontraron perfiles."))
-            self._battery_buttons_layout.addWidget(QLabel("No se encontraron perfiles."))
+            self._current_buttons_layout.addWidget(QLabel(tr("asusctl_profiles.no_profiles")))
+            self._battery_buttons_layout.addWidget(QLabel(tr("asusctl_profiles.no_profiles")))
             return
 
         for name in profiles:
@@ -122,19 +123,29 @@ class ProfilesPage(QWidget):
     def _set_current(self, profile: str) -> None:
         ok, err = set_current_profile(profile)
         if ok:
-            QMessageBox.information(self, "Perfil actual", f"Perfil actual establecido en «{profile}».")
+            QMessageBox.information(self, tr("dialogs.profile_set"), tr("dialogs.profile_set_message", profile=profile))
             self._load()
         else:
-            QMessageBox.critical(self, "Error", f"No se pudo cambiar el perfil:\n{err}")
+            QMessageBox.critical(self, tr("dialogs.error"), tr("dialogs.profile_error", err=err))
 
     def _set_battery(self, profile: str) -> None:
         ok, err = set_battery_profile(profile)
         if ok:
             QMessageBox.information(
                 self,
-                "Perfil con batería",
-                f"Cuando uses batería se aplicará el perfil «{profile}».",
+                tr("dialogs.battery_profile"),
+                tr("dialogs.battery_profile_message", profile=profile),
             )
             self._load()
         else:
-            QMessageBox.critical(self, "Error", f"No se pudo establecer el perfil en batería:\n{err}")
+            QMessageBox.critical(self, tr("dialogs.error"), tr("dialogs.battery_profile_error", err=err))
+
+    def refresh_ui(self) -> None:
+        self._title_label.setText(tr("asusctl_profiles.title"))
+        self._profile_active_label.setText(tr("asusctl_profiles.active"))
+        self._profile_ac_label.setText(tr("asusctl_profiles.ac"))
+        self._profile_battery_label.setText(tr("asusctl_profiles.battery"))
+        self._now_group.setTitle(tr("asusctl_profiles.now_group"))
+        self._bat_group.setTitle(tr("asusctl_profiles.battery_group"))
+        self._refresh_btn.setText(tr("asusctl_profiles.refresh"))
+        self._load()

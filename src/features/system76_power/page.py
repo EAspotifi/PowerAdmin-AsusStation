@@ -15,6 +15,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
+from src.app.i18n import tr
 from .cli import (
     get_profile,
     get_profile_list,
@@ -40,23 +41,23 @@ class System76PowerPage(QWidget):
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
 
-        title = QLabel("System76-power")
-        title.setObjectName("pageTitle")
-        title.setFont(QFont("", 14, QFont.Weight.Bold))
-        layout.addWidget(title)
+        self._title_label = QLabel(tr("system76_power.title"))
+        self._title_label.setObjectName("pageTitle")
+        self._title_label.setFont(QFont("", 14, QFont.Weight.Bold))
+        layout.addWidget(self._title_label)
 
-        desc = QLabel("Perfiles de energía para portátiles Pop!_OS / System76.")
-        desc.setWordWrap(True)
-        desc.setStyleSheet("color: gray;")
-        layout.addWidget(desc)
+        self._desc_label = QLabel(tr("system76_power.desc"))
+        self._desc_label.setWordWrap(True)
+        self._desc_label.setStyleSheet("color: gray;")
+        layout.addWidget(self._desc_label)
 
-        self._current_label = QLabel("Perfil actual: —")
+        self._current_label = QLabel(tr("system76_power.current_profile"))
         self._current_label.setFont(QFont("", 11))
         layout.addWidget(self._current_label)
 
-        group = QGroupBox("Seleccionar perfil")
-        group.setFont(QFont("", 10))
-        group_layout = QVBoxLayout(group)
+        self._profile_group = QGroupBox(tr("system76_power.select_profile"))
+        self._profile_group.setFont(QFont("", 10))
+        group_layout = QVBoxLayout(self._profile_group)
         profile_btn_layout = QGridLayout()
         for i, name in enumerate(get_profile_list()):
             display = name.capitalize()
@@ -68,7 +69,7 @@ class System76PowerPage(QWidget):
             row, col = divmod(i, 2)
             profile_btn_layout.addWidget(btn, row, col)
         group_layout.addLayout(profile_btn_layout)
-        layout.addWidget(group)
+        layout.addWidget(self._profile_group)
 
         # Separador
         line = QFrame()
@@ -79,36 +80,36 @@ class System76PowerPage(QWidget):
         # Modo de gráficos (título + botón ayuda)
         graphics_title_row = QHBoxLayout()
         graphics_title_row.setSpacing(8)
-        graphics_label = QLabel("Modo de gráficos")
-        graphics_label.setFont(QFont("", 11, QFont.Weight.Bold))
-        graphics_title_row.addWidget(graphics_label)
+        self._graphics_title_label = QLabel(tr("system76_power.graphics_title"))
+        self._graphics_title_label.setFont(QFont("", 11, QFont.Weight.Bold))
+        graphics_title_row.addWidget(self._graphics_title_label)
         self._graphics_help_btn = QPushButton("?")
         self._graphics_help_btn.setFixedSize(24, 24)
         self._graphics_help_btn.setStyleSheet(
             "border-radius: 12px; font-weight: bold; font-size: 14px;"
         )
-        self._graphics_help_btn.setToolTip("Explicación de los modos de gráficos")
+        self._graphics_help_btn.setToolTip(tr("system76_power.graphics_help_tooltip"))
         self._graphics_help_btn.clicked.connect(self._show_graphics_modes_help)
         graphics_title_row.addWidget(self._graphics_help_btn)
         graphics_title_row.addStretch(1)
         layout.addLayout(graphics_title_row)
-        graphics_note = QLabel("Se requiere reinicio después de cambiar el modo.")
-        graphics_note.setWordWrap(True)
-        graphics_note.setStyleSheet("color: gray;")
-        layout.addWidget(graphics_note)
-        self._graphics_current_label = QLabel("Modo actual: —")
+        self._graphics_note_label = QLabel(tr("system76_power.graphics_note"))
+        self._graphics_note_label.setWordWrap(True)
+        self._graphics_note_label.setStyleSheet("color: gray;")
+        layout.addWidget(self._graphics_note_label)
+        self._graphics_current_label = QLabel(tr("system76_power.graphics_current"))
         self._graphics_current_label.setFont(QFont("", 10))
         layout.addWidget(self._graphics_current_label)
-        graphics_group = QGroupBox("Seleccionar modo")
-        graphics_group.setFont(QFont("", 10))
-        graphics_layout = QVBoxLayout(graphics_group)
+        self._graphics_group = QGroupBox(tr("system76_power.select_graphics"))
+        self._graphics_group.setFont(QFont("", 10))
+        graphics_layout = QVBoxLayout(self._graphics_group)
         self._graphics_buttons_layout = QGridLayout()
         graphics_layout.addLayout(self._graphics_buttons_layout)
-        layout.addWidget(graphics_group)
+        layout.addWidget(self._graphics_group)
 
-        btn_refresh = QPushButton("Actualizar")
-        btn_refresh.clicked.connect(self._load)
-        layout.addWidget(btn_refresh)
+        self._refresh_btn = QPushButton(tr("system76_power.refresh"))
+        self._refresh_btn.clicked.connect(self._load)
+        layout.addWidget(self._refresh_btn)
         layout.addStretch(1)
 
     def showEvent(self, event) -> None:
@@ -117,11 +118,11 @@ class System76PowerPage(QWidget):
 
     def _load(self) -> None:
         current = get_profile()
-        self._current_label.setText(f"Perfil actual: {current.capitalize() if current else '—'}")
+        base = tr("system76_power.current_profile").replace("--", current.capitalize() if current else "—")
+        self._current_label.setText(base)
         graphics_current = get_graphics_mode()
-        self._graphics_current_label.setText(
-            f"Modo actual: {graphics_current.capitalize() if graphics_current else '—'}"
-        )
+        gbase = tr("system76_power.graphics_current").replace("--", graphics_current.capitalize() if graphics_current else "—")
+        self._graphics_current_label.setText(gbase)
         self._refresh_graphics_buttons(graphics_current)
 
     def _refresh_graphics_buttons(self, current: str) -> None:
@@ -148,44 +149,51 @@ class System76PowerPage(QWidget):
         if ok:
             QMessageBox.information(
                 self,
-                "Perfil de energía",
-                f"Perfil establecido en «{profile.capitalize()}».",
+                tr("dialogs.system76_profile_set"),
+                tr("dialogs.system76_profile_message", profile=profile.capitalize()),
             )
             self._load()
         else:
-            QMessageBox.critical(self, "Error", f"No se pudo cambiar el perfil:\n{err}")
+            QMessageBox.critical(self, tr("dialogs.error"), tr("dialogs.system76_profile_error", err=err))
 
     def _set_graphics_mode(self, mode: str) -> None:
         ok, err = set_graphics_mode(mode)
         if ok:
             QMessageBox.information(
                 self,
-                "Modo de gráficos",
-                f"Modo establecido en «{mode.capitalize()}».\n\nSe requiere reiniciar el equipo para aplicar el cambio.",
+                tr("dialogs.graphics_mode_set"),
+                tr("dialogs.graphics_mode_message", mode=mode.capitalize()),
             )
             self._load()
         else:
-            QMessageBox.critical(self, "Error", f"No se pudo cambiar el modo:\n{err}")
+            QMessageBox.critical(self, tr("dialogs.error"), tr("dialogs.graphics_mode_error", err=err))
 
     def _show_graphics_modes_help(self) -> None:
         """Muestra ventana emergente con la explicación de cada modo de gráficos."""
-        text = """<h3>Modos de gráficos</h3>
-<p><b>Integrated</b><br/>
-Solo la GPU integrada. Menor consumo y mayor duración de batería. La GPU discreta (NVIDIA) no se usa.</p>
-
-<p><b>Hybrid (PRIME)</b><br/>
-Usa ambas GPUs. La integrada para la pantalla por defecto; la NVIDIA cuando una aplicación la solicita. Buen equilibrio entre rendimiento y batería.</p>
-
-<p><b>NVIDIA</b><br/>
-La GPU discreta NVIDIA como principal. Mejor rendimiento gráfico y para juegos; mayor consumo.</p>
-
-<p><b>Compute</b><br/>
-Similar a Integrated en pantalla (todo se dibuja con la integrada), pero la NVIDIA queda disponible para cálculo (CUDA, ML, etc.) sin usarla para mostrar la interfaz.</p>
-
-<p><i>Tras cambiar el modo es necesario reiniciar el equipo.</i></p>"""
+        t = lambda k: tr(f"help_graphics_modes.{k}")
+        text = f"""<h3>{t('title')}</h3>
+<p><b>Integrated</b><br/>{t('integrated')}</p>
+<p><b>Hybrid (PRIME)</b><br/>{t('hybrid')}</p>
+<p><b>NVIDIA</b><br/>{t('nvidia')}</p>
+<p><b>Compute</b><br/>{t('compute')}</p>
+<p><i>{t('reboot_note')}</i></p>"""
         msg = QMessageBox(self)
-        msg.setWindowTitle("Ayuda: modos de gráficos")
+        msg.setWindowTitle(tr("dialogs.graphics_help_title"))
         msg.setTextFormat(Qt.TextFormat.RichText)
         msg.setText(text)
         msg.setStandardButtons(QMessageBox.StandardButton.Ok)
         msg.exec()
+
+    def refresh_ui(self) -> None:
+        """Actualiza textos al cambiar el idioma."""
+        self._title_label.setText(tr("system76_power.title"))
+        self._desc_label.setText(tr("system76_power.desc"))
+        self._current_label.setText(tr("system76_power.current_profile"))
+        self._profile_group.setTitle(tr("system76_power.select_profile"))
+        self._graphics_title_label.setText(tr("system76_power.graphics_title"))
+        self._graphics_help_btn.setToolTip(tr("system76_power.graphics_help_tooltip"))
+        self._graphics_note_label.setText(tr("system76_power.graphics_note"))
+        self._graphics_current_label.setText(tr("system76_power.graphics_current"))
+        self._graphics_group.setTitle(tr("system76_power.select_graphics"))
+        self._refresh_btn.setText(tr("system76_power.refresh"))
+        self._load()
