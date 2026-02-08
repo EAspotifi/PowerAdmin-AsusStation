@@ -12,6 +12,7 @@ Aplicación de escritorio en Python con PyQt6 para administrar **supergfxctl**, 
 - [Qué necesita el proyecto para funcionar](#qué-necesita-el-proyecto-para-funcionar)
 - [Desarrollo](#desarrollo)
   - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Funciones por módulo](#funciones-por-módulo)
   - [Normas para colaboraciones](#normas-para-colaboraciones)
 
 ---
@@ -131,11 +132,15 @@ AsusControl/
 ├── requirements.txt        # PyQt6
 ├── README.md
 ├── .gitignore
+├── languages/              # Traducciones (i18n)
+│   ├── es.json
+│   └── en.json
 └── src/
     ├── app/                # Shell de la aplicación
-    │   ├── main_window.py  # Ventana principal, barra lateral, scroll, tema
+    │   ├── main_window.py  # Ventana principal, barra lateral, scroll, tema e idioma
     │   ├── sidebar.py      # Menú lateral (Supergfxctl, Asusctl, System76-power)
-    │   └── theme.py        # Tema claro/oscuro (QSS), sin dependencias extra
+    │   ├── theme.py        # Tema claro/oscuro (QSS), sin dependencias extra
+    │   └── i18n.py         # Carga de idiomas desde JSON y traducción por claves
     │
     └── features/           # Un slice por “feature”
         ├── supergfxctl/    # Modos de gráficos (supergfxctl)
@@ -159,7 +164,29 @@ AsusControl/
             └── page.py     # UI de la página
 ```
 
-- **app/**: composición global, barra lateral, tema y scroll del contenido.
+#### Funciones por módulo
+
+| Módulo | Función / responsabilidad |
+|--------|----------------------------|
+| **main.py** | `main()` — crea `QApplication`, aplica tema oscuro, muestra `MainWindow` y refresca layout tras el primer frame. |
+| **app/main_window.py** | `MainWindow` — shell: título, barra lateral, `QStackedWidget` con las tres secciones (Supergfxctl, Asusctl, System76-power), selector de idioma y slider de tema (claro/oscuro). Guarda idioma en `QSettings`. |
+| **app/sidebar.py** | `Sidebar` — lista con ítems Supergfxctl, Asusctl, System76-power; `current_id()`, `on_section_changed(callback)`, `refresh_ui()`. Constantes: `SIDEBAR_ID_*`. |
+| **app/theme.py** | `ThemeKind` (LIGHT/DARK), `get_stylesheet()`, `apply_theme()`, `get_highlight_color()` — QSS y paleta para tema claro/oscuro. |
+| **app/i18n.py** | `tr(key, **kwargs)` — traduce por clave; `get_language()`, `set_language()`, `on_language_changed(callback)`; `language_display_name(code)`; `SUPPORTED`, `DEFAULT`. Carga JSON desde `languages/`. |
+| **supergfxctl/cli.py** | `get_supported_modes()`, `get_current_mode()`, `get_pending_mode()`, `get_pending_action()`, `set_mode(mode)` — ejecutan `supergfxctl -s/-g/-P/-p/-m`. |
+| **supergfxctl/page.py** | `SupergfxctlPage` — muestra modo actual y pendiente, grid de botones por modo, refrescar; `set_pending_highlight_color()`, `refresh()`, `refresh_ui()`. |
+| **asusctl/cli.py** | `get_info()`, `get_battery_info()`, `set_battery_limit(percent)`, `profile_list()`, `profile_get()`, `profile_set(profile)`, `profile_set_battery(profile)` — llamadas a `asusctl`. |
+| **asusctl/container.py** | `AsusctlContainer` — submenú (Información, Perfiles, Batería) + `QStackedWidget` con `InfoPage`, `ProfilesPage`, `BatteryPage`; `refresh_ui()`. |
+| **asusctl/use_cases/info.py** | `get_system_info()` — delega en `get_info()`. |
+| **asusctl/use_cases/battery.py** | `get_battery_info()`, `set_battery_limit(percent)`, `parse_current_limit_from_info(text)` — orquestan batería. |
+| **asusctl/use_cases/profiles.py** | `get_profile_list()`, `get_profile_state()` → (texto, activo, ac, batería), `set_current_profile()`, `set_battery_profile()` — orquestan perfiles. |
+| **asusctl/pages/info_page.py** | `InfoPage` — texto de `asusctl info`, botón refrescar. |
+| **asusctl/pages/battery_page.py** | `BatteryPage` — info de batería, spinbox 20–100 % y botón para fijar límite de carga. |
+| **asusctl/pages/profiles_page.py** | `ProfilesPage` — estado activo/AC/batería, botones “perfil actual” y “perfil en batería”. |
+| **system76_power/cli.py** | `get_profile()`, `get_profile_list()`, `set_profile(profile)`, `get_graphics_mode()`, `get_graphics_modes_list()`, `set_graphics_mode(mode)` — ejecutan `system76-power profile/graphics`. |
+| **system76_power/page.py** | `System76PowerPage` — perfil actual (Battery/Balanced/Performance), botones de perfil y de modo gráfico (integrated/hybrid/nvidia/compute), ayuda de modos, `refresh_ui()`. |
+
+- **app/**: composición global, barra lateral, tema, i18n y scroll del contenido.
 - **features/*/cli.py**: único punto que ejecuta comandos externos (CLI); fácil de mockear en tests.
 - **features/*/use_cases/** (donde exista): orquestan la lógica y devuelven datos a la UI; no conocen PyQt.
 - **features/*/page.py** o **pages/**: solo UI y llamadas a casos de uso o cli; sin lógica de negocio pesada.
