@@ -1,4 +1,4 @@
-# AsusControl
+# PowerAdmin-AsusStation
 
 Aplicación de escritorio en Python con PyQt6 para administrar **supergfxctl**, **asusctl** y **system76-power** en portátiles ASUS y System76/Pop!_OS (modos de gráficos, perfiles de energía, batería). Pensada para empaquetar como ejecutable en Ubuntu, Fedora y Debian.
 
@@ -45,8 +45,8 @@ En **X11**, si la ventana no arranca por el plugin Qt:
 **1. Clonar e ingresar al proyecto**
 
 ```bash
-git clone https://github.com/<tu-usuario>/AsusControl.git
-cd AsusControl
+git clone https://github.com/<tu-usuario>/PowerAdmin-AsusStation.git
+cd PowerAdmin-AsusStation
 ```
 
 **2. Crear y activar el entorno virtual**
@@ -91,21 +91,21 @@ Sin activar el venv (desde la raíz del proyecto):
 
 ### Instalación desde un release (ejecutable)
 
-Si descargaste un release (por ejemplo `AsusControl-1.0.0-linux-x86_64.tar.gz`):
+Si descargaste un release (por ejemplo `PowerAdmin-AsusStation-1.0.0-linux-x86_64.tar.gz`):
 
 ```bash
-tar xzf AsusControl-1.0.0-linux-x86_64.tar.gz
-./AsusControl
+tar xzf PowerAdmin-AsusStation-1.0.0-linux-x86_64.tar.gz
+./PowerAdmin-AsusStation-1.0.0
 ```
 
 Para tener el ejecutable en el PATH:
 
 ```bash
-mv AsusControl ~/.local/bin/
-# o: sudo mv AsusControl /usr/local/bin/
+mv PowerAdmin-AsusStation-1.0.0 ~/.local/bin/
+# o: sudo mv PowerAdmin-AsusStation-1.0.0 /usr/local/bin/
 ```
 
-Luego puedes ejecutar desde cualquier terminal: `AsusControl`.
+Luego puedes ejecutar desde cualquier terminal: `PowerAdmin-AsusStation-1.0.0`.
 
 ---
 
@@ -127,7 +127,7 @@ No se necesitan variables de entorno obligatorias; opcionalmente en Wayland pued
 El código sigue una arquitectura **Clean** con **vertical slices** y nombres que dejan claro el propósito de cada parte (**screaming architecture**).
 
 ```
-AsusControl/
+PowerAdmin-AsusStation/
 ├── main.py                 # Punto de entrada; aplica tema y lanza MainWindow
 ├── requirements.txt        # PyQt6
 ├── README.md

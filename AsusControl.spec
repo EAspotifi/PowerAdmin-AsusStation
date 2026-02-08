@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-# PyInstaller spec para AsusControl
+# PyInstaller spec para PowerAdmin-AsusStation
 # Uso: pyinstaller AsusControl.spec
 
 import sys
@@ -38,7 +38,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='AsusControl',
+    name='PowerAdmin-AsusStation',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
