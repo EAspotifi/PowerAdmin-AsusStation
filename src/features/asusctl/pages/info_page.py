@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
+from src.app.i18n import tr
 from ..use_cases.info import get_system_info
 
 
@@ -25,15 +26,15 @@ class InfoPage(QWidget):
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
 
-        title = QLabel("Información")
-        title.setObjectName("pageTitle")
-        title.setFont(QFont("", 14, QFont.Weight.Bold))
-        layout.addWidget(title)
+        self._title_label = QLabel(tr("asusctl_info.title"))
+        self._title_label.setObjectName("pageTitle")
+        self._title_label.setFont(QFont("", 14, QFont.Weight.Bold))
+        layout.addWidget(self._title_label)
 
         self._info_text = QLabel()
         self._info_text.setWordWrap(True)
         self._info_text.setFont(QFont("Monospace", 10))
-        self._info_text.setText("Cargando…")
+        self._info_text.setText(tr("asusctl_info.loading"))
         self._info_text.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
 
         scroll = QScrollArea()
@@ -43,9 +44,9 @@ class InfoPage(QWidget):
         scroll.setWidget(self._info_text)
         layout.addWidget(scroll)
 
-        btn = QPushButton("Actualizar información")
-        btn.clicked.connect(self._load)
-        layout.addWidget(btn)
+        self._refresh_btn = QPushButton(tr("asusctl_info.refresh"))
+        self._refresh_btn.clicked.connect(self._load)
+        layout.addWidget(self._refresh_btn)
         layout.addStretch(1)
 
     def showEvent(self, event) -> None:
@@ -53,6 +54,11 @@ class InfoPage(QWidget):
         self._load()
 
     def _load(self) -> None:
-        self._info_text.setText("Cargando…")
+        self._info_text.setText(tr("asusctl_info.loading"))
         text = get_system_info()
-        self._info_text.setText(text or "Sin datos.")
+        self._info_text.setText(text or tr("asusctl_info.no_data"))
+
+    def refresh_ui(self) -> None:
+        self._title_label.setText(tr("asusctl_info.title"))
+        self._refresh_btn.setText(tr("asusctl_info.refresh"))
+        self._load()

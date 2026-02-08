@@ -1,0 +1,98 @@
+{
+  "app": {
+    "title": "AsusControl",
+    "theme": "Tema",
+    "language": "Idioma"
+  },
+  "sidebar": {
+    "title": "AsusControl",
+    "supergfxctl": "Supergfxctl",
+    "asusctl": "Asusctl",
+    "system76_power": "System76-power"
+  },
+  "asusctl": {
+    "submenu_info": "Información",
+    "submenu_profiles": "Perfiles de rendimiento",
+    "submenu_battery": "Batería"
+  },
+  "supergfxctl": {
+    "title": "Modos de gráficos (supergfxctl)",
+    "current_mode": "Modo actual: --",
+    "pending": "Cambio pendiente: --",
+    "pending_none": "Cambio pendiente: ninguno",
+    "select_mode": "Selecciona un modo:",
+    "refresh": "Actualizar modos",
+    "no_modes": "No se encontraron modos o supergfxctl no está disponible."
+  },
+  "asusctl_info": {
+    "title": "Información",
+    "refresh": "Actualizar información",
+    "loading": "Cargando…",
+    "no_data": "Sin datos."
+  },
+  "asusctl_battery": {
+    "title": "Batería",
+    "limit_label": "Límite de carga (%):",
+    "set_limit": "Establecer límite",
+    "loading": "Cargando…",
+    "no_data": "Sin datos."
+  },
+  "asusctl_profiles": {
+    "title": "Perfiles de rendimiento",
+    "active": "Activo: --",
+    "ac": "En AC: --",
+    "battery": "Con batería: --",
+    "now_group": "Perfil en uso ahora",
+    "now_desc": "Elige el perfil que quieres usar en este momento.",
+    "battery_group": "Perfil con batería (automático)",
+    "battery_desc": "Perfil que se usará cuando el portátil esté solo con batería.",
+    "refresh": "Actualizar perfiles",
+    "no_profiles": "No se encontraron perfiles."
+  },
+  "system76_power": {
+    "title": "System76-power",
+    "desc": "Perfiles de energía para portátiles Pop!_OS / System76.",
+    "current_profile": "Perfil actual: --",
+    "select_profile": "Seleccionar perfil",
+    "graphics_title": "Modo de gráficos",
+    "graphics_help_tooltip": "Explicación de los modos de gráficos",
+    "graphics_note": "Se requiere reinicio después de cambiar el modo.",
+    "graphics_current": "Modo actual: --",
+    "select_graphics": "Seleccionar modo",
+    "refresh": "Actualizar"
+  },
+  "dialogs": {
+    "error": "Error",
+    "supergfxctl_mode_changed": "Modo cambiado",
+    "supergfxctl_mode_message": "Se está cambiando a modo '{mode}'.\n\nAlgunos cambios requieren cerrar sesión o reiniciar.",
+    "supergfxctl_error": "No se pudo cambiar el modo:\n{err}",
+    "profile_set": "Perfil actual",
+    "profile_set_message": "Perfil actual establecido en «{profile}».",
+    "profile_error": "No se pudo cambiar el perfil:\n{err}",
+    "battery_profile": "Perfil con batería",
+    "battery_profile_message": "Cuando uses batería se aplicará el perfil «{profile}».",
+    "battery_profile_error": "No se pudo establecer el perfil en batería:\n{err}",
+    "battery_limit": "Límite de batería",
+    "battery_limit_message": "Límite de carga establecido en {percent}%.",
+    "battery_limit_error": "No se pudo establecer el límite:\n{err}",
+    "graphics_help_title": "Ayuda: modos de gráficos",
+    "graphics_mode_set": "Modo de gráficos",
+    "graphics_mode_message": "Modo establecido en «{mode}».\n\nSe requiere reiniciar el equipo para aplicar el cambio.",
+    "graphics_mode_error": "No se pudo cambiar el modo:\n{err}",
+    "system76_profile_set": "Perfil de energía",
+    "system76_profile_message": "Perfil establecido en «{profile}».",
+    "system76_profile_error": "No se pudo cambiar el perfil:\n{err}"
+  },
+  "help_graphics_modes": {
+    "title": "Modos de gráficos",
+    "integrated": "Solo la GPU integrada. Menor consumo y mayor duración de batería. La GPU discreta (NVIDIA) no se usa.",
+    "hybrid": "Usa ambas GPUs. La integrada para la pantalla por defecto; la NVIDIA cuando una aplicación la solicita. Buen equilibrio entre rendimiento y batería.",
+    "nvidia": "La GPU discreta NVIDIA como principal. Mejor rendimiento gráfico y para juegos; mayor consumo.",
+    "compute": "Similar a Integrated en pantalla (todo se dibuja con la integrada), pero la NVIDIA queda disponible para cálculo (CUDA, ML, etc.) sin usarla para mostrar la interfaz.",
+    "reboot_note": "Tras cambiar el modo es necesario reiniciar el equipo."
+  },
+  "language_names": {
+    "es": "Español",
+    "en": "English"
+  }
+}

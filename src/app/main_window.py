@@ -12,10 +12,19 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QSlider,
     QLabel,
+    QComboBox,
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSettings
 from PyQt6.QtGui import QFont
 
+from .i18n import (
+    tr,
+    get_language,
+    set_language,
+    on_language_changed,
+    SUPPORTED,
+    language_display_name,
+)
 from .sidebar import (
     Sidebar,
     SIDEBAR_ID_SUPERGFXCTL,
@@ -59,11 +68,17 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self._theme = ThemeKind.DARK
+        self._settings = QSettings("AsusControl", "AsusControl")
+        saved = self._settings.value("language", "es")
+        if saved in SUPPORTED:
+            set_language(saved)
         self._setup_ui()
         self._connect_sidebar()
+        self._sync_lang_combo()
+        on_language_changed(self._refresh_all_ui)
 
     def _setup_ui(self) -> None:
-        self.setWindowTitle("AsusControl")
+        self.setWindowTitle(tr("app.title"))
         self.setMinimumSize(700, 450)
         self.resize(800, 500)
 
@@ -100,12 +115,21 @@ class MainWindow(QMainWindow):
         content_layout.setContentsMargins(16, 16, 16, 16)
         content_layout.setSpacing(12)
 
-        # Esquina superior derecha: slide tema (claro ↔ oscuro)
+        # Barra superior: idioma + tema
         top_bar = QHBoxLayout()
         top_bar.addStretch(1)
-        theme_label = QLabel("Tema")
-        theme_label.setFont(QFont("", 9))
-        top_bar.addWidget(theme_label)
+        self._lang_label = QLabel(tr("app.language"))
+        self._lang_label.setFont(QFont("", 9))
+        top_bar.addWidget(self._lang_label)
+        self._lang_combo = QComboBox()
+        self._lang_combo.setMinimumWidth(120)
+        for code in SUPPORTED:
+            self._lang_combo.addItem(language_display_name(code), code)
+        self._lang_combo.currentIndexChanged.connect(self._on_language_changed)
+        top_bar.addWidget(self._lang_combo)
+        self._theme_label = QLabel(tr("app.theme"))
+        self._theme_label.setFont(QFont("", 9))
+        top_bar.addWidget(self._theme_label)
         self._theme_slider = QSlider(Qt.Orientation.Horizontal)
         self._theme_slider.setObjectName("themeSlider")
         self._theme_slider.setMinimum(0)
@@ -142,6 +166,35 @@ class MainWindow(QMainWindow):
         content_layout.addWidget(scroll, 1)
 
         main_layout.addWidget(content, 1)
+
+    def _sync_lang_combo(self) -> None:
+        """Sincroniza el combo de idioma con el idioma actual."""
+        current = get_language()
+        for i in range(self._lang_combo.count()):
+            if self._lang_combo.itemData(i) == current:
+                self._lang_combo.blockSignals(True)
+                self._lang_combo.setCurrentIndex(i)
+                self._lang_combo.blockSignals(False)
+                break
+
+    def _on_language_changed(self, index: int) -> None:
+        code = self._lang_combo.itemData(index)
+        if code and code in SUPPORTED:
+            self._settings.setValue("language", code)
+            set_language(code)
+
+    def _refresh_all_ui(self) -> None:
+        """Actualiza todos los textos de la UI al cambiar el idioma."""
+        self.setWindowTitle(tr("app.title"))
+        self._theme_label.setText(tr("app.theme"))
+        self._lang_label.setText(tr("app.language"))
+        for i in range(self._lang_combo.count()):
+            code = self._lang_combo.itemData(i)
+            self._lang_combo.setItemText(i, language_display_name(code))
+        self._sidebar.refresh_ui()
+        self._supergfxctl_page.refresh_ui()
+        self._asusctl_container.refresh_ui()
+        self._system76_page.refresh_ui()
 
     def _connect_sidebar(self) -> None:
         self._sidebar.on_section_changed(self._on_section_changed)

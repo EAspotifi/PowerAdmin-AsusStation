@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QFont
 
+from src.app.i18n import tr
 from .cli import (
     get_supported_modes,
     get_current_mode,
@@ -34,16 +35,16 @@ class SupergfxctlPage(QWidget):
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
 
-        title = QLabel("Modos de gráficos (supergfxctl)")
-        title.setObjectName("pageTitle")
-        title.setFont(QFont("", 14, QFont.Weight.Bold))
-        layout.addWidget(title)
+        self._title_label = QLabel(tr("supergfxctl.title"))
+        self._title_label.setObjectName("pageTitle")
+        self._title_label.setFont(QFont("", 14, QFont.Weight.Bold))
+        layout.addWidget(self._title_label)
 
-        self._current_label = QLabel("Modo actual: --")
+        self._current_label = QLabel(tr("supergfxctl.current_mode"))
         self._current_label.setFont(QFont("", 11))
         layout.addWidget(self._current_label)
 
-        self._pending_label = QLabel("Cambio pendiente: --")
+        self._pending_label = QLabel(tr("supergfxctl.pending"))
         self._pending_label.setFont(QFont("", 10))
         self._pending_label.setStyleSheet(f"color: {self._pending_highlight_color};")
         layout.addWidget(self._pending_label)
@@ -53,9 +54,9 @@ class SupergfxctlPage(QWidget):
         line.setFrameShadow(QFrame.Shadow.Sunken)
         layout.addWidget(line)
 
-        modes_label = QLabel("Selecciona un modo:")
-        modes_label.setFont(QFont("", 10))
-        layout.addWidget(modes_label)
+        self._modes_label = QLabel(tr("supergfxctl.select_mode"))
+        self._modes_label.setFont(QFont("", 10))
+        layout.addWidget(self._modes_label)
 
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
@@ -67,7 +68,7 @@ class SupergfxctlPage(QWidget):
         scroll.setWidget(self._modes_container)
         layout.addWidget(scroll, 1)
 
-        self._refresh_btn = QPushButton("Actualizar modos")
+        self._refresh_btn = QPushButton(tr("supergfxctl.refresh"))
         self._refresh_btn.clicked.connect(self.refresh)
         layout.addWidget(self._refresh_btn)
 
@@ -93,17 +94,18 @@ class SupergfxctlPage(QWidget):
         pending_mode = get_pending_mode()
         pending_action = get_pending_action()
 
-        self._current_label.setText(f"Modo actual: {current or '--'}")
+        base_current = tr("supergfxctl.current_mode").replace("--", current or "--")
+        self._current_label.setText(base_current)
         if pending_mode:
-            msg = f"Cambio pendiente: {pending_mode}"
+            msg = tr("supergfxctl.pending").replace("--", pending_mode)
             if pending_action:
                 msg += f" ({pending_action})"
             self._pending_label.setText(msg)
         else:
-            self._pending_label.setText("Cambio pendiente: ninguno")
+            self._pending_label.setText(tr("supergfxctl.pending_none"))
 
         if not modes:
-            label = QLabel("No se encontraron modos o supergfxctl no está disponible.")
+            label = QLabel(tr("supergfxctl.no_modes"))
             label.setWordWrap(True)
             self._modes_layout.addWidget(label, 0, 0)
         else:
@@ -125,10 +127,18 @@ class SupergfxctlPage(QWidget):
         if ok:
             QMessageBox.information(
                 self,
-                "Modo cambiado",
-                f"Se está cambiando a modo '{mode}'.\n\n"
-                "Algunos cambios requieren cerrar sesión o reiniciar.",
+                tr("dialogs.supergfxctl_mode_changed"),
+                tr("dialogs.supergfxctl_mode_message", mode=mode),
             )
             self.refresh()
         else:
-            QMessageBox.critical(self, "Error", f"No se pudo cambiar el modo:\n{err}")
+            QMessageBox.critical(self, tr("dialogs.error"), tr("dialogs.supergfxctl_error", err=err))
+
+    def refresh_ui(self) -> None:
+        """Actualiza textos al cambiar el idioma."""
+        self._title_label.setText(tr("supergfxctl.title"))
+        self._current_label.setText(tr("supergfxctl.current_mode"))
+        self._pending_label.setText(tr("supergfxctl.pending"))
+        self._modes_label.setText(tr("supergfxctl.select_mode"))
+        self._refresh_btn.setText(tr("supergfxctl.refresh"))
+        self.refresh()
