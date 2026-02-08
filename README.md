@@ -2,6 +2,18 @@
 
 Aplicación de escritorio en Python con PyQt6 para administrar **supergfxctl**, **asusctl** y **system76-power** en portátiles ASUS y System76/Pop!_OS (modos de gráficos, perfiles de energía, batería). Pensada para empaquetar como ejecutable en Ubuntu, Fedora y Debian.
 
+## Índice
+
+- [Instalación y ejecución](#instalación-y-ejecución)
+  - [Requisitos previos](#requisitos-previos)
+  - [Instalación desde el código fuente](#instalación-desde-el-código-fuente)
+  - [Ejecución](#ejecución)
+  - [Instalación desde un release (ejecutable)](#instalación-desde-un-release-ejecutable)
+- [Qué necesita el proyecto para funcionar](#qué-necesita-el-proyecto-para-funcionar)
+- [Desarrollo](#desarrollo)
+  - [Estructura del proyecto](#estructura-del-proyecto)
+  - [Normas para colaboraciones](#normas-para-colaboraciones)
+
 ---
 
 ## Instalación y ejecución
