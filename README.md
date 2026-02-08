@@ -4,9 +4,9 @@ Aplicación de escritorio en Python con PyQt6 para administrar **supergfxctl**, 
 
 ---
 
-## Requisitos
+## Instalación y ejecución
 
-### Obligatorios (para ejecutar la aplicación)
+### Requisitos previos
 
 | Requisito      | Versión / Notas |
 |----------------|------------------|
@@ -14,81 +14,85 @@ Aplicación de escritorio en Python con PyQt6 para administrar **supergfxctl**, 
 | **PyQt6**      | ≥ 6.6.0          |
 | **Sistema**    | Linux (X11 o Wayland) |
 
-### Por funcionalidad (herramientas del sistema)
+**Herramientas opcionales** (la app funciona sin ellas; cada sección usa la que exista):
 
-La app muestra y usa solo las secciones cuyas herramientas estén instaladas:
+| Sección          | Herramienta        |
+|------------------|--------------------|
+| **Supergfxctl**  | `supergfxctl` + servicio `supergfxd` |
+| **Asusctl**      | `asusctl`          |
+| **System76-power** | `system76-power` |
 
-| Sección          | Herramienta        | Uso |
-|------------------|--------------------|-----|
-| **Supergfxctl**  | `supergfxctl` + servicio `supergfxd` | Modos de gráficos en portátiles ASUS (integrated, hybrid, etc.). |
-| **Asusctl**      | `asusctl`          | Información del dispositivo, perfiles de rendimiento y batería (ASUS). |
-| **System76-power** | `system76-power` | Perfiles de energía y modo de gráficos en Pop!_OS / System76. |
-
-- Si falta una herramienta, esa sección seguirá visible pero sus acciones mostrarán un mensaje de error (p. ej. «supergfxctl no encontrado»).
-- En **X11**, para evitar fallos de Qt con el plugin xcb puede hacer falta: `libxcb-cursor0` (Debian/Ubuntu: `sudo apt install libxcb-cursor0`).
+En **X11**, si la ventana no arranca por el plugin Qt:  
+`sudo apt install libxcb-cursor0` (Debian/Ubuntu).
 
 ---
 
-## Instalación
+### Instalación desde el código fuente
 
-### 1. Clonar el repositorio
+**1. Clonar e ingresar al proyecto**
 
 ```bash
 git clone https://github.com/<tu-usuario>/AsusControl.git
 cd AsusControl
 ```
 
-### 2. Crear y activar el entorno virtual
+**2. Crear y activar el entorno virtual**
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate   # Linux / macOS
+source .venv/bin/activate
 ```
 
-En Windows (si se usara):
+*(En Windows: `.venv\Scripts\activate`)*
 
-```cmd
-.venv\Scripts\activate
-```
-
-### 3. Instalar dependencias de Python
+**3. Instalar dependencias**
 
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. (Opcional) Herramientas del sistema
+**4. (Opcional) Instalar herramientas del sistema**
 
-Según tu equipo e interés en cada sección:
-
-- **Supergfxctl** (ASUS, modos de gráficos): [supergfxctl](https://gitlab.com/asus-linux/supergfxctl), servicio `supergfxd` activo y usuario en grupo `users`/`wheel`/`adm`.
-- **Asusctl** (ASUS): [asusctl](https://gitlab.com/asus-linux/asusctl).
-- **System76-power** (Pop!_OS / System76): suele venir instalado en Pop!_OS.
-
-En X11, si la app no arranca por el plugin xcb:
-
-```bash
-# Debian / Ubuntu
-sudo apt update
-sudo apt install libxcb-cursor0
-```
+- **Supergfxctl**: [supergfxctl](https://gitlab.com/asus-linux/supergfxctl) + servicio `supergfxd`, usuario en grupo `users`/`wheel`/`adm`.
+- **Asusctl**: [asusctl](https://gitlab.com/asus-linux/asusctl).
+- **System76-power**: suele venir en Pop!_OS.
 
 ---
 
-## Ejecución
+### Ejecución
 
-Con el entorno virtual activado:
+Con el entorno virtual **activado**:
 
 ```bash
 python main.py
 ```
 
-Desde la raíz del proyecto, sin activar el venv explícitamente (Linux/macOS):
+Sin activar el venv (desde la raíz del proyecto):
 
 ```bash
 .venv/bin/python main.py
 ```
+
+---
+
+### Instalación desde un release (ejecutable)
+
+Si descargaste un release (por ejemplo `AsusControl-1.0.0-linux-x86_64.tar.gz`):
+
+```bash
+tar xzf AsusControl-1.0.0-linux-x86_64.tar.gz
+./AsusControl
+```
+
+Para tener el ejecutable en el PATH:
+
+```bash
+mv AsusControl ~/.local/bin/
+# o: sudo mv AsusControl /usr/local/bin/
+```
+
+Luego puedes ejecutar desde cualquier terminal: `AsusControl`.
 
 ---
 
