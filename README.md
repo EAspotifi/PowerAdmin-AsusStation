@@ -74,7 +74,7 @@ El paquete instala el ejecutable en `/usr/bin` y una entrada en el menú de apli
 **1. Clonar e ingresar al proyecto**
 
 ```bash
-git clone https://github.com/<tu-usuario>/PowerAdmin-AsusStation.git
+git clone https://github.com/EAspotifi/PowerAdmin-AsusStation.git
 cd PowerAdmin-AsusStation
 ```
 
