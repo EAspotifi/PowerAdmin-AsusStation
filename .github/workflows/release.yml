@@ -8,6 +8,10 @@ on:
     tags:
       - 'v*'
 
+# Permisos necesarios para crear releases y subir archivos
+permissions:
+  contents: write
+
 jobs:
   build-linux:
     runs-on: ubuntu-22.04
