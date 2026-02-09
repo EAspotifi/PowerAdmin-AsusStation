@@ -29,6 +29,11 @@ jobs:
         run: |
           pyinstaller --noconfirm AsusControl.spec
 
+      - name: Build .deb package
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          VERSION=$VERSION ./build-deb.sh
+
       - name: Rename binary to versioned name and create tarball
         id: tarball
         run: |
@@ -43,12 +48,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: PowerAdmin-AsusStation-${{ github.ref_name }}-linux-x86_64
-          path: dist/PowerAdmin-AsusStation-${{ steps.tarball.outputs.version }}-linux-x86_64.tar.gz
+          path: |
+            dist/PowerAdmin-AsusStation-${{ steps.tarball.outputs.version }}-linux-x86_64.tar.gz
+            dist/poweradmin-asusstation_${{ steps.tarball.outputs.version }}_amd64.deb
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/PowerAdmin-AsusStation-${{ steps.tarball.outputs.version }}-linux-x86_64.tar.gz
+          files: |
+            dist/PowerAdmin-AsusStation-${{ steps.tarball.outputs.version }}-linux-x86_64.tar.gz
+            dist/poweradmin-asusstation_${{ steps.tarball.outputs.version }}_amd64.deb
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

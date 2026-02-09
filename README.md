@@ -1,11 +1,15 @@
-# PowerAdmin-AsusStation
+# AsusControl
 
 Aplicación de escritorio en Python con PyQt6 para administrar **supergfxctl**, **asusctl** y **system76-power** en portátiles ASUS y System76/Pop!_OS (modos de gráficos, perfiles de energía, batería). Pensada para empaquetar como ejecutable en Ubuntu, Fedora y Debian.
 
+Para **generar e instalar el paquete .deb** y **publicar un release**, consulta la [Guía del paquete .deb y releases](GUIA-DEB-Y-RELEASES.md).
+
 ## Índice
 
+- [Guía .deb y releases](GUIA-DEB-Y-RELEASES.md) — generar .deb, instalación y publicar un release
 - [Instalación y ejecución](#instalación-y-ejecución)
   - [Requisitos previos](#requisitos-previos)
+  - [Instalación con paquete .deb (recomendada)](#instalación-con-paquete-deb-recomendada)
   - [Instalación desde el código fuente](#instalación-desde-el-código-fuente)
   - [Ejecución](#ejecución)
   - [Instalación desde un release (ejecutable)](#instalación-desde-un-release-ejecutable)
@@ -37,6 +41,31 @@ Aplicación de escritorio en Python con PyQt6 para administrar **supergfxctl**, 
 
 En **X11**, si la ventana no arranca por el plugin Qt:  
 `sudo apt install libxcb-cursor0` (Debian/Ubuntu).
+
+---
+
+### Instalación con paquete .deb (recomendada)
+
+En **Debian, Ubuntu y Pop!_OS** la forma más sencilla es instalar el paquete `.deb` desde [Releases](https://github.com/EAspotifi/PowerAdmin-AsusStation/releases):
+
+1. Descarga `poweradmin-asusstation_1.0.0_amd64.deb` (o la versión que aparezca en el release).
+2. Instala con:
+
+```bash
+sudo dpkg -i poweradmin-asusstation_1.0.0_amd64.deb
+```
+
+Si `dpkg` avisa de dependencias sin instalar:
+
+```bash
+sudo apt-get install -f
+```
+
+3. Listo. Puedes ejecutar **AsusControl** de dos formas:
+   - **Desde el menú de aplicaciones**: busca **"AsusControl"**.
+   - **Desde la terminal**: `PowerAdmin-AsusStation`.
+
+El paquete instala el ejecutable en `/usr/bin` y una entrada en el menú de aplicaciones; no necesitas permisos manuales ni mover archivos.
 
 ---
 
@@ -91,21 +120,27 @@ Sin activar el venv (desde la raíz del proyecto):
 
 ### Instalación desde un release (ejecutable)
 
-Si descargaste un release (por ejemplo `PowerAdmin-AsusStation-1.0.0-linux-x86_64.tar.gz`):
+En cada [release](https://github.com/EAspotifi/PowerAdmin-AsusStation/releases) encontrarás:
+- **`poweradmin-asusstation_1.0.0_amd64.deb`** — recomendado en Debian/Ubuntu/Pop!_OS (ver [Instalación con paquete .deb](#instalación-con-paquete-deb-recomendada)).
+- **`PowerAdmin-AsusStation-1.0.0-linux-x86_64.tar.gz`** — un **solo archivo ejecutable** (no es el código fuente).
+
+Si usas el tarball:
 
 ```bash
 tar xzf PowerAdmin-AsusStation-1.0.0-linux-x86_64.tar.gz
+chmod +x PowerAdmin-AsusStation-1.0.0
 ./PowerAdmin-AsusStation-1.0.0
 ```
 
-Para tener el ejecutable en el PATH:
+Para tenerlo en el PATH:
 
 ```bash
 mv PowerAdmin-AsusStation-1.0.0 ~/.local/bin/
-# o: sudo mv PowerAdmin-AsusStation-1.0.0 /usr/local/bin/
+# Asegúrate de que ~/.local/bin está en tu PATH
+PowerAdmin-AsusStation-1.0.0
 ```
 
-Luego puedes ejecutar desde cualquier terminal: `PowerAdmin-AsusStation-1.0.0`.
+**Nota:** Si al extraer ves una **carpeta** con `main.py`, `src/`, etc., es el **código fuente** (por ejemplo, si descargaste el ZIP del repositorio). En ese caso ejecuta con `python main.py` desde esa carpeta, o descarga el archivo del release que sea el ejecutable (`.tar.gz` del release) o el `.deb`.
 
 ---
 
