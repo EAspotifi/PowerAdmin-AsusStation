@@ -22,7 +22,7 @@ def get_info() -> str:
     except subprocess.TimeoutExpired:
         return "Tiempo de espera agotado"
     except FileNotFoundError:
-        return "asusctl no encontrado. ¿Está instalado?"
+        return "No disponible"
 
 
 def get_battery_info() -> str:
@@ -44,7 +44,7 @@ def get_battery_info() -> str:
     except subprocess.TimeoutExpired:
         return "Tiempo de espera agotado"
     except FileNotFoundError:
-        return "asusctl no encontrado. ¿Está instalado?"
+        return "No disponible"
 
 
 def set_battery_limit(percent: int) -> tuple[bool, str]:
@@ -71,7 +71,7 @@ def set_battery_limit(percent: int) -> tuple[bool, str]:
     except subprocess.TimeoutExpired:
         return False, "Tiempo de espera agotado"
     except FileNotFoundError:
-        return False, "asusctl no encontrado. ¿Está instalado?"
+        return False, "No disponible"
 
 
 def profile_list() -> list[str]:
@@ -106,7 +106,7 @@ def profile_get() -> str:
     except subprocess.TimeoutExpired:
         return "Tiempo de espera agotado"
     except FileNotFoundError:
-        return "asusctl no encontrado. ¿Está instalado?"
+        return "No disponible"
 
 
 def profile_set(profile: str) -> tuple[bool, str]:
@@ -126,7 +126,7 @@ def profile_set(profile: str) -> tuple[bool, str]:
     except subprocess.TimeoutExpired:
         return False, "Tiempo de espera agotado"
     except FileNotFoundError:
-        return False, "asusctl no encontrado. ¿Está instalado?"
+        return False, "No disponible"
 
 
 def profile_set_battery(profile: str) -> tuple[bool, str]:
@@ -146,4 +146,4 @@ def profile_set_battery(profile: str) -> tuple[bool, str]:
     except subprocess.TimeoutExpired:
         return False, "Tiempo de espera agotado"
     except FileNotFoundError:
-        return False, "asusctl no encontrado. ¿Está instalado?"
+        return False, "No disponible"

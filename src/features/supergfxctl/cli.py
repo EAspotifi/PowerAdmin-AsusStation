@@ -90,4 +90,4 @@ def set_mode(mode: str) -> tuple[bool, str]:
     except subprocess.TimeoutExpired:
         return False, "Tiempo de espera agotado"
     except FileNotFoundError:
-        return False, "supergfxctl no encontrado. ¿Está instalado?"
+        return False, "No disponible"

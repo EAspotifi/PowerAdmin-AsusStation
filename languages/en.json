@@ -2,7 +2,8 @@
   "app": {
     "title": "AsusControl",
     "theme": "Theme",
-    "language": "Language"
+    "language": "Language",
+    "auto_install": "Auto-install missing packages"
   },
   "sidebar": {
     "title": "AsusControl",

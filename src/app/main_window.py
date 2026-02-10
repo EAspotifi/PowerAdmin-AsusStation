@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
     QSlider,
     QLabel,
     QComboBox,
+    QCheckBox,
 )
 from PyQt6.QtCore import Qt, QSettings
 from PyQt6.QtGui import QFont
@@ -139,6 +140,13 @@ class MainWindow(QMainWindow):
         self._theme_slider.setStyleSheet(_theme_slider_stylesheet())
         self._theme_slider.valueChanged.connect(self._on_theme_slider_changed)
         top_bar.addWidget(self._theme_slider)
+        # Opción de configuración: auto-instalar paquetes faltantes (al final de la barra)
+        self._auto_install_cb = QCheckBox(tr("app.auto_install"))
+        self._auto_install_cb.setFont(QFont("", 9))
+        saved_auto = self._settings.value("auto_install", False, type=bool)
+        self._auto_install_cb.setChecked(saved_auto)
+        self._auto_install_cb.stateChanged.connect(self._on_auto_install_changed)
+        top_bar.addWidget(self._auto_install_cb)
         content_layout.addLayout(top_bar)
 
         self._stack = QStackedWidget(self)
@@ -183,11 +191,15 @@ class MainWindow(QMainWindow):
             self._settings.setValue("language", code)
             set_language(code)
 
+    def _on_auto_install_changed(self, state: int) -> None:
+        self._settings.setValue("auto_install", state == Qt.CheckState.Checked)
+
     def _refresh_all_ui(self) -> None:
         """Actualiza todos los textos de la UI al cambiar el idioma."""
         self.setWindowTitle(tr("app.title"))
         self._theme_label.setText(tr("app.theme"))
         self._lang_label.setText(tr("app.language"))
+        self._auto_install_cb.setText(tr("app.auto_install"))
         for i in range(self._lang_combo.count()):
             code = self._lang_combo.itemData(i)
             self._lang_combo.setItemText(i, language_display_name(code))
