@@ -150,6 +150,7 @@ PowerAdmin-AsusStation-1.0.0
 2. **Display**: sesión gráfica (X11 o Wayland). No está pensada para servidor headless.
 3. **Permisos**: las herramientas (`supergfxctl`, `asusctl`, `system76-power`) pueden requerir usuario en ciertos grupos o `sudo` según la distro; la app solo las invoca por CLI.
 4. **Opcional en X11**: `libxcb-cursor0` para el plugin Qt xcb si aparece el error relacionado con «xcb-cursor».
+5. **Herramientas no instaladas**: si alguna herramienta (supergfxctl, asusctl, system76-power) no está en el sistema, la app muestra **"No disponible"** y no intenta instalarla. En la barra superior hay una opción de configuración **"Auto-instalar paquetes faltantes"** (al final); su estado se guarda en la configuración y queda disponible para uso futuro.
 
 No se necesitan variables de entorno obligatorias; opcionalmente en Wayland puedes forzar: `QT_QPA_PLATFORM=wayland python main.py`.
 
@@ -204,13 +205,13 @@ PowerAdmin-AsusStation/
 | Módulo | Función / responsabilidad |
 |--------|----------------------------|
 | **main.py** | `main()` — crea `QApplication`, aplica tema oscuro, muestra `MainWindow` y refresca layout tras el primer frame. |
-| **app/main_window.py** | `MainWindow` — shell: título, barra lateral, `QStackedWidget` con las tres secciones (Supergfxctl, Asusctl, System76-power), selector de idioma y slider de tema (claro/oscuro). Guarda idioma en `QSettings`. |
+| **app/main_window.py** | `MainWindow` — shell: título, barra lateral, `QStackedWidget` con las tres secciones (Supergfxctl, Asusctl, System76-power), selector de idioma, slider de tema (claro/oscuro) y opción **Auto-instalar paquetes faltantes** al final de la barra. Guarda en `QSettings`: `language`, `auto_install`. Si una herramienta no está instalada, la UI muestra "No disponible". |
 | **app/sidebar.py** | `Sidebar` — lista con ítems Supergfxctl, Asusctl, System76-power; `current_id()`, `on_section_changed(callback)`, `refresh_ui()`. Constantes: `SIDEBAR_ID_*`. |
 | **app/theme.py** | `ThemeKind` (LIGHT/DARK), `get_stylesheet()`, `apply_theme()`, `get_highlight_color()` — QSS y paleta para tema claro/oscuro. |
 | **app/i18n.py** | `tr(key, **kwargs)` — traduce por clave; `get_language()`, `set_language()`, `on_language_changed(callback)`; `language_display_name(code)`; `SUPPORTED`, `DEFAULT`. Carga JSON desde `languages/`. |
-| **supergfxctl/cli.py** | `get_supported_modes()`, `get_current_mode()`, `get_pending_mode()`, `get_pending_action()`, `set_mode(mode)` — ejecutan `supergfxctl -s/-g/-P/-p/-m`. |
+| **supergfxctl/cli.py** | `get_supported_modes()`, `get_current_mode()`, `get_pending_mode()`, `get_pending_action()`, `set_mode(mode)` — ejecutan `supergfxctl -s/-g/-P/-p/-m`. Si el binario no existe, devuelven "No disponible". |
 | **supergfxctl/page.py** | `SupergfxctlPage` — muestra modo actual y pendiente, grid de botones por modo, refrescar; `set_pending_highlight_color()`, `refresh()`, `refresh_ui()`. |
-| **asusctl/cli.py** | `get_info()`, `get_battery_info()`, `set_battery_limit(percent)`, `profile_list()`, `profile_get()`, `profile_set(profile)`, `profile_set_battery(profile)` — llamadas a `asusctl`. |
+| **asusctl/cli.py** | `get_info()`, `get_battery_info()`, `set_battery_limit(percent)`, `profile_list()`, `profile_get()`, `profile_set(profile)`, `profile_set_battery(profile)` — llamadas a `asusctl`. Si no está instalado, devuelven "No disponible". |
 | **asusctl/container.py** | `AsusctlContainer` — submenú (Información, Perfiles, Batería) + `QStackedWidget` con `InfoPage`, `ProfilesPage`, `BatteryPage`; `refresh_ui()`. |
 | **asusctl/use_cases/info.py** | `get_system_info()` — delega en `get_info()`. |
 | **asusctl/use_cases/battery.py** | `get_battery_info()`, `set_battery_limit(percent)`, `parse_current_limit_from_info(text)` — orquestan batería. |
@@ -218,7 +219,7 @@ PowerAdmin-AsusStation/
 | **asusctl/pages/info_page.py** | `InfoPage` — texto de `asusctl info`, botón refrescar. |
 | **asusctl/pages/battery_page.py** | `BatteryPage` — info de batería, spinbox 20–100 % y botón para fijar límite de carga. |
 | **asusctl/pages/profiles_page.py** | `ProfilesPage` — estado activo/AC/batería, botones “perfil actual” y “perfil en batería”. |
-| **system76_power/cli.py** | `get_profile()`, `get_profile_list()`, `set_profile(profile)`, `get_graphics_mode()`, `get_graphics_modes_list()`, `set_graphics_mode(mode)` — ejecutan `system76-power profile/graphics`. |
+| **system76_power/cli.py** | `get_profile()`, `get_profile_list()`, `set_profile(profile)`, `get_graphics_mode()`, `get_graphics_modes_list()`, `set_graphics_mode(mode)` — ejecutan `system76-power profile/graphics`. Si no está instalado, devuelven "No disponible". |
 | **system76_power/page.py** | `System76PowerPage` — perfil actual (Battery/Balanced/Performance), botones de perfil y de modo gráfico (integrated/hybrid/nvidia/compute), ayuda de modos, `refresh_ui()`. |
 
 - **app/**: composición global, barra lateral, tema, i18n y scroll del contenido.

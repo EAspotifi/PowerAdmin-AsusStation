@@ -92,6 +92,8 @@ sudo apt-get install -f   # si lo pide dpkg
 - **Menú de aplicaciones**: busca **"AsusControl"**.
 - **Terminal**: `PowerAdmin-AsusStation`
 
+Si alguna herramienta (supergfxctl, asusctl, system76-power) no está instalada, la app mostrará **"No disponible"** en esa sección y no intentará instalarla. En la barra superior puedes activar la opción **"Auto-instalar paquetes faltantes"** (se guarda en la configuración).
+
 ### Desinstalar
 
 ```bash

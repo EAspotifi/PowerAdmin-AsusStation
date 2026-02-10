@@ -49,7 +49,7 @@ def set_profile(profile: str) -> tuple[bool, str]:
     except subprocess.TimeoutExpired:
         return False, "Tiempo de espera agotado"
     except FileNotFoundError:
-        return False, "system76-power no encontrado. ¿Está instalado? (típico en Pop!_OS)"
+        return False, "No disponible"
 
 
 def get_graphics_mode() -> str:
@@ -95,4 +95,4 @@ def set_graphics_mode(mode: str) -> tuple[bool, str]:
     except subprocess.TimeoutExpired:
         return False, "Tiempo de espera agotado"
     except FileNotFoundError:
-        return False, "system76-power no encontrado. ¿Está instalado? (típico en Pop!_OS)"
+        return False, "No disponible"
